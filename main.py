@@ -7,12 +7,14 @@ from hello import CHello
 pygame.init()
 
 rsl = (640,480)
-surf = pygame.display.set_mode(rsl)
+main_surf = pygame.display.set_mode(rsl)
 
 hello = CHello(rsl)
 
-surf.fill((0,0,0))
+main_surf.fill((0,0,0))
 pygame.display.flip()
+
+hello.main_loop(main_surf)
 
 run = 1
 while run == 1:
@@ -20,6 +22,3 @@ while run == 1:
 	if event.type == pygame.KEYDOWN:
 		if event.key == pygame.K_ESCAPE:
 			run = 0
-	elif event.type == hello.event_type:
-		surf.blit(hello.do_shot(surf.copy()), (0,0))
-		pygame.display.flip()
