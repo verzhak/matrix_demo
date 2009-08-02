@@ -3,19 +3,23 @@
 
 import pygame
 from hello import CHello
+from console import CConsole
 
 pygame.init()
 
 rsl = (640,480)
+
+my_hello = CHello(rsl)
+my_console = CConsole(rsl)
+
 main_surf = pygame.display.set_mode(rsl)
-
-hello = CHello(rsl)
-
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
-hello.main_loop(main_surf)
+my_hello.main_loop(main_surf)
+my_console.main_loop(main_surf)
 
+# TODO убрать
 run = 1
 while run == 1:
 	event = pygame.event.poll()
