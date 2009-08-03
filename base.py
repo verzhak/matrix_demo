@@ -78,10 +78,7 @@ class CStr:
 
 			else:
 
-				# TODO
-				temp = 0
-				for y in range(0, x):
-					temp = temp + self.surf[y].get_width()
-				#main_surf.blit(self.surf[x], (self.pos[0] + x * self.fsize / 2, self.pos[1]))
-				main_surf.blit(self.surf[x], (self.pos[0] + temp, self.pos[1]))
+				main_surf.blit(self.surf[x],
+						(self.pos[0] + sum(map(lambda x: x.get_width(), self.surf[0 : x])),
+							self.pos[1]))
 

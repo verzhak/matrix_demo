@@ -16,7 +16,7 @@ main_surf = pygame.display.set_mode(rsl)
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
-#my_hello.main_loop(main_surf) #TODO раскомментировать
+# my_hello.main_loop(main_surf) #TODO раскомментировать
 my_console.main_loop(main_surf)
 
 # TODO убрать
