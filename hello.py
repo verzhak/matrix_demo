@@ -3,17 +3,16 @@
 
 import pygame
 
-from base import CBase, CStr
+from base import CBase, CStr, rsl
 
 class CHello(CBase):
 
 	class __CHelloMatrix(pygame.sprite.Sprite):
 
-		def __init__(self, rsl, num):
+		def __init__(self, num):
 
 			pygame.sprite.Sprite.__init__(self)
 
-			self.__rsl = rsl
 			self.__num = num
 
 			self.__surf = []
@@ -25,8 +24,8 @@ class CHello(CBase):
 			
 			self.rect = self.__surf[0].get_rect()
 			self.pos = (
-					(self.__rsl[0] - self.__surf[0].get_width()) / 2,
-					(self.__rsl[1] - self.__surf[0].get_height()) / 2)
+					(rsl[0] - self.__surf[0].get_width()) / 2,
+					(rsl[1] - self.__surf[0].get_height()) / 2)
 			self.rect = pygame.Rect(self.pos, (self.rect.width, self.rect.height))
 
 			self.__next_surf = 0
@@ -40,20 +39,19 @@ class CHello(CBase):
 			else:
 				self.image = self.__clear_surf
 
-	def __init__(self, rsl):
+	def __init__(self, event_delay):
 
-		CBase.__init__(self, 1)
+		CBase.__init__(self, 1, event_delay)
 
 		self.__shot = 0
-		self.__rsl = rsl
 
-		self.__name = CStr(self.__rsl, "Verzhak",36)
-		self.__pres = CStr(self.__rsl, "presented:",14)
+		self.__name = CStr("Verzhak",36)
+		self.__pres = CStr("presented:",14)
 		self.__pres.set_pos((self.__pres.pos[0], self.__pres.pos[1] + self.__name.height / 2))
-		self.__date = CStr(self.__rsl, "(02.08.2009)",14,only = True) # TODO - исправить
-		self.__date.set_pos((self.__rsl[0] - self.__date.width, self.__rsl[1] - self.__date.fsize - 3))
+		self.__date = CStr("(02.08.2009)",14,only = True) # TODO - исправить
+		self.__date.set_pos((rsl[0] - self.__date.width, rsl[1] - self.__date.fsize - 3))
 		self.__matrix_num = 8
-		self.__matrix = pygame.sprite.Group([self.__CHelloMatrix(rsl, self.__matrix_num)])
+		self.__matrix = pygame.sprite.Group([self.__CHelloMatrix(self.__matrix_num)])
 
 	def do_shot(self, main_surf):
 
@@ -71,7 +69,7 @@ class CHello(CBase):
 
 		elif self.__shot < (self.__name.len + self.__pres.len +15):
 
-			main_surf.blit(main_surf,(0, - self.__rsl[1] / 30))
+			main_surf.blit(main_surf,(0, - rsl[1] / 30))
 
 		elif (self.__name.len + self.__pres.len + 15) == self.__shot:
 

@@ -2,7 +2,7 @@
 #coding=utf-8
 
 import pygame
-from base import CBase, CStr
+from base import CBase, CStr, rsl
 
 class CConsole(CBase):
 
@@ -28,6 +28,7 @@ class CConsole(CBase):
 
 			if args[0] == -1:
 
+				self.__surf_loop = 0
 				self.image = self.__surf[3]
 
 			elif args[0] == 0:
@@ -51,8 +52,6 @@ class CConsole(CBase):
 
 				self.image = self.__surf[0]
 				
-				#self.rect.x = self.rect.x + self.__step_x
-				#self.rect.x = self.rect.x + 12
 				self.rect.x = self.rect.x + args[1]
 
 			else:
@@ -60,47 +59,227 @@ class CConsole(CBase):
 				self.image = self.__surf[0]
 
 				self.rect.x = 10
-				#self.rect.y = self.rect.y + self.__step_y
-				self.rect.y = self.rect.y + 22
-			
-	def __init__(self, rsl):
+				self.rect.y = self.rect.y + args[1]
+
+	class __CKnock(pygame.sprite.Sprite):
+
+		def __init__(self):
+
+			pygame.sprite.Sprite.__init__(self)
+
+			self.__surf = []
+			for x in range(1,7):
+				self.__surf.append(pygame.image.load("image/knock/k" + str(x) + ".png"))
+			self.__clear_surf = self.__surf[0].copy()
+			self.__clear_surf.fill((0,0,0))
+
+			self.__surf_loop = 0
+			self.image = self.__surf[0]
+
+			self.rect = pygame.Rect((0,0),
+					(self.image.get_width(), self.image.get_height()))
+			self.__set_rect((-100,-50))
+
+		def __set_rect(self, dis):
+
+			self.rect.x = (rsl[0] - self.rect.width) / 2 + dis[0]
+			self.rect.y = (rsl[1] - self.rect.height) / 2 + dis[1]
+
+		def update(self, *args):
+
+			if self.__surf_loop % 2 == 0:
+
+				real_loop = self.__surf_loop // 2
+
+				if args[0] == 0:
+
+					if real_loop < 6:
+
+						self.image = self.__surf[real_loop]
+
+					elif real_loop > 6:
+
+						self.image = self.__surf[real_loop - 6]
+
+					else:
+
+						self.__set_rect((100, 50))
+						self.image = self.__surf[0]
+
+				elif (args[0] == -1) and (real_loop != 6):
+
+					self.image = self.__clear_surf
+
+			if args[0] == 0:
+
+				self.__surf_loop = self.__surf_loop + 1
+
+	def __init__(self, event_delay):
 		
-		CBase.__init__(self, 2)
+		CBase.__init__(self, 2, event_delay)
 
-		self.__rsl = rsl
+		self.__wakeup = CStr("Wake up, Neo!", 22, font_color = (30, 189, 4), pos = (10,10))
+		self.__has_you = CStr("The Matrix has you...", 22,
+				font_color = (30, 189, 4), pos = (10, self.__wakeup.pos[1] + self.__wakeup.height))
+		self.__rabbit = CStr("Follow the white rabbit...", 22,
+				font_color = (30, 189, 4), pos = (10,self.__has_you.pos[1] + self.__has_you.height))
+		self.__knock_sprite = self.__CKnock()
+		self.__knock = pygame.sprite.Group([self.__knock_sprite])
 
-		self.__wakeup = CStr(rsl, "Wake up, Neo!", 22, font_color = (30, 189, 4), pos = (10,10))
-		self.__has_you = CStr(rsl, "The Matrix has you...", 14,
-				font_color = (30, 189, 4), pos = (10,25))
-		self.__rabbit = CStr(rsl, "Follow the white rabbit...", 14,
-				font_color = (30, 189, 4), pos = (10,40))
-		self.__knock = CStr(rsl, "KNOCK, KNOCK", 32, font_color = (30, 189, 4))
+		self.__whr_active_rect = pygame.Rect((10,10), (
+			self.__rabbit.rect.width + 40,
+			10 + self.__wakeup.rect.height + self.__has_you.rect.height + self.__rabbit.rect.height))
+
+		self.__kk_active_rect = pygame.Rect((
+			self.__knock_sprite.rect.x, self.__knock_sprite.rect.y),
+			(500, 200))
 
 		self.__cursor = pygame.sprite.Group([self.__CCursor()])
 
 		self.__cur_shot = 0
 
+		self.__cached = [
+			(37 + self.__wakeup.len + self.__has_you.len),
+			(19 + self.__wakeup.len),
+			(18 + self.__wakeup.len),
+			(36 + self.__wakeup.len),
+			(36 + self.__wakeup.len + self.__has_you.len),
+			(74 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len), # 5
+			(54 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len),
+			(54 + self.__wakeup.len + self.__has_you.len),
+			(97 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len), # 8
+			(73 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len),
+			(100 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len)]
+
+	def __blackout(self, main_surf, rect, step):
+
+		x = rect.x
+		x_guard = x + rect.width
+
+		while x < x_guard:
+
+			y = rect.y
+			y_guard = y + rect.height
+
+			while y < y_guard:
+
+				tcol = main_surf.get_at((x,y))
+
+				if tcol[1] > step:
+
+					main_surf.set_at((x,y), (tcol[0], tcol[1] - step, tcol[2]))
+
+				elif tcol[1] > 0:
+
+					main_surf.set_at((x,y), (tcol[0], 0, tcol[2]))
+
+				y = y + 1
+
+			x = x + 1
+
 	def do_shot(self, main_surf):
 
-		if self.__cur_shot < 17:
+		if self.__cur_shot < self.__cached[0]:
+
+			if self.__cur_shot < self.__cached[1]:
+
+				if self.__cur_shot < 18:
+
+					if self.__cur_shot == 17:
+
+						self.__cursor.update(1)
+
+					else:
+						
+						self.__cursor.update(0)
+						
+				else:
+
+					self.__cursor.update(-1)
+					self.__cursor.draw(main_surf)
+
+					if self.__cur_shot == self.__cached[2]:
+
+						self.__cursor.update(3, self.__wakeup.height)
+
+					else:
+						
+						self.__wakeup.draw(main_surf, self.__cur_shot - 18)
+						self.__cursor.update(2, self.__wakeup.surf[self.__cur_shot - 18].get_width())
+
+			else:
+				
+				if self.__cur_shot < self.__cached[3]:
 			
-			self.__cursor.update(0)
+					self.__cursor.update(0)
+
+				else:
+
+					self.__cursor.update(-1)
+					self.__cursor.draw(main_surf)
+
+					if self.__cur_shot == self.__cached[4]:
+
+						self.__cursor.update(3, self.__has_you.height)
+
+					else:
+
+						surf_ind = self.__cur_shot - self.__cached[3]
+
+						self.__has_you.draw(main_surf, surf_ind)
+						self.__cursor.update(2, self.__has_you.surf[surf_ind].get_width())
+
 			self.__cursor.draw(main_surf)
 
-		elif self.__cur_shot == 17:
+		else:
+		
+			if self.__cur_shot < self.__cached[5]:
 
-			self.__cursor.update(1)
-			self.__cursor.draw(main_surf)
+				if self.__cur_shot < self.__cached[6]:
 
-		elif self.__cur_shot < (17 + self.__wakeup.len + 1):
+					if self.__cur_shot < self.__cached[7]:
 
-			self.__cursor.update(-1)
-			self.__cursor.draw(main_surf)
-			self.__wakeup.draw(main_surf, self.__cur_shot - 18)
-			self.__cursor.update(2, self.__wakeup.surf[self.__cur_shot - 18].get_width())
-			self.__cursor.draw(main_surf)
+						self.__cursor.update(0)
 
-		# TODO
+					else:
+
+						surf_ind =self.__cur_shot - self.__cached[7] 
+
+						self.__cursor.update(-1)
+						self.__cursor.draw(main_surf)
+						self.__rabbit.draw(main_surf,surf_ind)
+						self.__cursor.update(2,self.__rabbit.surf[surf_ind].get_width())
+
+					self.__cursor.draw(main_surf)
+
+				else:
+
+					self.__blackout(main_surf, self.__whr_active_rect, 10)
+
+			else:
+
+				if self.__cur_shot < self.__cached[8]:
+
+					if self.__cur_shot == self.__cached[9]:
+
+						main_surf.fill((0,0,0))
+
+					else:
+
+						self.__knock.update(-1)
+						self.__knock.draw(main_surf)
+						self.__knock.update(0)
+						self.__knock.draw(main_surf)
+
+				else:
+
+					if self.__cur_shot < self.__cached[10]:
+
+						self.__blackout(main_surf, self.__kk_active_rect, 50)
+
+					else:
+
+						return None
 
 		self.__cur_shot = self.__cur_shot + 1
 

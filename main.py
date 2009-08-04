@@ -4,19 +4,18 @@
 import pygame
 from hello import CHello
 from console import CConsole
+from base import rsl
 
 pygame.init()
 
-rsl = (640,480)
-
-my_hello = CHello(rsl)
-my_console = CConsole(rsl)
+my_hello = CHello(100)
+my_console = CConsole(100)
 
 main_surf = pygame.display.set_mode(rsl)
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
-# my_hello.main_loop(main_surf) #TODO раскомментировать
+#my_hello.main_loop(main_surf) #TODO раскомментировать
 my_console.main_loop(main_surf)
 
 # TODO убрать
