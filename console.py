@@ -149,7 +149,7 @@ class CConsole(CBase):
 			(54 + self.__wakeup.len + self.__has_you.len),
 			(97 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len), # 8
 			(73 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len),
-			(100 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len)]
+			(101 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len)]
 
 	def __blackout(self, main_surf, rect, step):
 

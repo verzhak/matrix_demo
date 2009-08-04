@@ -15,13 +15,9 @@ main_surf = pygame.display.set_mode(rsl)
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
-#my_hello.main_loop(main_surf) #TODO раскомментировать
-my_console.main_loop(main_surf)
+#if my_hello.main_loop(main_surf): #TODO раскомментировать
+	
+if my_console.main_loop(main_surf):
+		
+	pass
 
-# TODO убрать
-run = 1
-while run == 1:
-	event = pygame.event.poll()
-	if event.type == pygame.KEYDOWN:
-		if event.key == pygame.K_ESCAPE:
-			run = 0

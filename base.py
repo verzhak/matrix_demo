@@ -22,16 +22,23 @@ class CBase:
 		event_type = pygame.USEREVENT + self.__event_num
 		pygame.time.set_timer(event_type, self.__event_delay)
 
-		run = 1
-		while run == 1:
+		while True:
+
 			event = pygame.event.poll()
+			
 			if event.type == pygame.KEYDOWN:	
+			
 				if event.key == pygame.K_ESCAPE:
-					run = 0
+				
+					return False
+
 			elif event.type == event_type:
+				
 				if self.do_shot(main_surf) == None:
-					run = 0
+				
 					main_surf.fill((0,0,0))
+					return True
+				
 				pygame.display.flip()
 
 class CStr:
