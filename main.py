@@ -12,6 +12,10 @@ my_hello = CHello(100)
 my_console = CConsole(100)
 
 main_surf = pygame.display.set_mode(rsl)
+
+pygame.display.set_caption("@@@ |^|atrix @@@ (created by Verzhak - verzhak@gmail.com)")
+pygame.display.set_icon(pygame.image.load("image/icon.png"))
+
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
