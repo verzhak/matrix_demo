@@ -1,5 +1,4 @@
 #!/home/amv/env/bin/python3
-#coding=utf-8
 
 import pygame
 
