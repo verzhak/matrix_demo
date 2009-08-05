@@ -1,5 +1,3 @@
-#!/home/amv/env/bin/python3
-
 import pygame
 
 from base import CBase, CStr, rsl
@@ -47,7 +45,7 @@ class CHello(CBase):
 		self.__name = CStr("Verzhak",36)
 		self.__pres = CStr("presented:",14)
 		self.__pres.set_pos((self.__pres.pos[0], self.__pres.pos[1] + self.__name.height / 2))
-		self.__date = CStr("(02.08.2009)",14,only = True) # TODO - исправить
+		self.__date = CStr("(06.08.2009)",14,only = True)
 		self.__date.set_pos((rsl[0] - self.__date.width, rsl[1] - self.__date.fsize - 3))
 		self.__matrix_num = 8
 		self.__matrix = pygame.sprite.Group([self.__CHelloMatrix(self.__matrix_num)])
@@ -93,9 +91,9 @@ class CHello(CBase):
 
 		else:
 
-			return None
+			return False
 
 		self.__shot = self.__shot + 1
 
-		return main_surf
+		return True
 

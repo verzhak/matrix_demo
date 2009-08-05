@@ -1,5 +1,3 @@
-#!/home/amv/env/bin/python3
-
 import pygame
 
 rsl = (640,480)
@@ -16,12 +14,18 @@ class CBase:
 
 		print("[Переопределить метод]")
 
+	def completion(self, main_surf):
+
+		return False # Заглушка, метод переопределяется в дочерних классах там, где нужно
+
 	def main_loop(self, main_surf):
 
 		event_type = pygame.USEREVENT + self.__event_num
 		pygame.time.set_timer(event_type, self.__event_delay)
 
-		while True:
+		running = 3
+
+		while running == 3:
 
 			event = pygame.event.poll()
 			
@@ -29,16 +33,40 @@ class CBase:
 			
 				if event.key == pygame.K_ESCAPE:
 				
-					return False
+					running = 1
 
 			elif event.type == event_type:
 				
-				if self.do_shot(main_surf) == None:
+				if not self.do_shot(main_surf):
 				
-					main_surf.fill((0,0,0))
-					return True
+					running = 2
 				
 				pygame.display.flip()
+
+		run_compl = True
+
+		while run_compl:
+
+			event = pygame.event.poll()
+
+			if event.type == event_type:
+				
+				if not self.completion(main_surf):
+
+					run_compl = False
+
+				pygame.display.flip()
+
+		main_surf.fill((0,0,0))
+
+		if running == 2:
+
+			return True
+
+		else:
+
+			return False
+
 
 class CStr:
 

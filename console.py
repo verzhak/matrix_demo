@@ -1,5 +1,3 @@
-#!/home/amv/env/bin/python3
-
 import pygame
 from base import CBase, CStr, rsl
 
@@ -278,9 +276,9 @@ class CConsole(CBase):
 
 					else:
 
-						return None
+						return False
 
 		self.__cur_shot = self.__cur_shot + 1
 
-		return main_surf
+		return True
 
