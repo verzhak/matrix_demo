@@ -111,9 +111,9 @@ class CConsole(CBase):
 
 				self.__surf_loop = self.__surf_loop + 1
 
-	def __init__(self):
+	def __init__(self, main_surf):
 		
-		CBase.__init__(self)
+		CBase.__init__(self, main_surf)
 
 		self.__wakeup = CStr("Wake up, Neo!", 22, font_color = (30, 189, 4), pos = (10,10))
 		self.__has_you = CStr("The Matrix has you...", 22,
@@ -124,15 +124,16 @@ class CConsole(CBase):
 		self.__knock = pygame.sprite.Group([self.__knock_sprite])
 
 		# 0 - WakeUp+Rabbit+MHY; 1 - Knock,Knock
-		self.__cached_region = [(
-									range(10, self.__rabbit.rect.width + 40),
-									range(10, 10 + self.__wakeup.rect.height +
-											self.__has_you.rect.height + self.__rabbit.rect.height)
-								),
-								(
-									range(self.__knock_sprite.rect.x, 570),
-									range(self.__knock_sprite.rect.y, 340)
-								)]
+		self.__cached_blackout = [
+					(
+						range(10, self.__rabbit.rect.width + 40),
+						range(10, 10 + self.__wakeup.rect.height + self.__has_you.rect.height
+									+ self.__rabbit.rect.height)
+					),
+					(
+						range(self.__knock_sprite.rect.x, 570),
+						range(self.__knock_sprite.rect.y, 340)
+					)]
 
 		self.__cursor = pygame.sprite.Group([self.__CCursor()])
 
@@ -151,23 +152,27 @@ class CConsole(CBase):
 			(73 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len),
 			(101 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len)]
 
-	def __blackout(self, main_surf, reg, step):
+	def __blackout(self, reg, step):
 
-		for x in self.__cached_region[reg][0]:
+		pxarray = pygame.PixelArray(self.main_surf)
 
-			for y in self.__cached_region[reg][1]:
+		for x in self.__cached_blackout[reg][0]:
 
-				tcol = main_surf.get_at((x,y))
+			for y in self.__cached_blackout[reg][1]:
 
-				if tcol[1] > step:
+				if pxarray[x][y] & 0x00FF00 == 0:
 
-					main_surf.set_at((x,y), (tcol[0], tcol[1] - step, tcol[2]))
+					continue
 
-				elif tcol[1] > 0:
+				elif (pxarray[x][y] & 0x00FF00) >> 8 > step:
 
-					main_surf.set_at((x,y), (tcol[0], 0, tcol[2]))
+					pxarray[x][y] = pxarray[x][y] - (step << 8)
 
-	def do_shot(self, main_surf):
+				else:
+
+					pxarray[x][y] = pxarray[x][y] & 0xFF00FF
+
+	def do_shot(self):
 
 		if self.__cur_shot < self.__cached[0]:
 
@@ -186,7 +191,7 @@ class CConsole(CBase):
 				else:
 
 					self.__cursor.update(-1)
-					self.__cursor.draw(main_surf)
+					self.__cursor.draw(self.main_surf)
 
 					if self.__cur_shot == self.__cached[2]:
 
@@ -194,7 +199,7 @@ class CConsole(CBase):
 
 					else:
 						
-						self.__wakeup.draw(main_surf, self.__cur_shot - 18)
+						self.__wakeup.draw(self.main_surf, self.__cur_shot - 18)
 						self.__cursor.update(2, self.__wakeup.surf[self.__cur_shot - 18].get_width())
 
 			else:
@@ -206,7 +211,7 @@ class CConsole(CBase):
 				else:
 
 					self.__cursor.update(-1)
-					self.__cursor.draw(main_surf)
+					self.__cursor.draw(self.main_surf)
 
 					if self.__cur_shot == self.__cached[4]:
 
@@ -216,10 +221,11 @@ class CConsole(CBase):
 
 						surf_ind = self.__cur_shot - self.__cached[3]
 
-						self.__has_you.draw(main_surf, surf_ind)
+						self.__has_you.draw(self.main_surf, surf_ind)
 						self.__cursor.update(2, self.__has_you.surf[surf_ind].get_width())
 
-			self.__cursor.draw(main_surf)
+			self.main_surf.unlock()
+			self.__cursor.draw(self.main_surf)
 
 		else:
 		
@@ -236,15 +242,15 @@ class CConsole(CBase):
 						surf_ind = self.__cur_shot - self.__cached[7] 
 
 						self.__cursor.update(-1)
-						self.__cursor.draw(main_surf)
-						self.__rabbit.draw(main_surf,surf_ind)
+						self.__cursor.draw(self.main_surf)
+						self.__rabbit.draw(self.main_surf,surf_ind)
 						self.__cursor.update(2,self.__rabbit.surf[surf_ind].get_width())
 
-					self.__cursor.draw(main_surf)
+					self.__cursor.draw(self.main_surf)
 
 				else:
 
-					self.__blackout(main_surf, 0, 10)
+					self.__blackout(0, 10)
 
 			else:
 
@@ -252,20 +258,20 @@ class CConsole(CBase):
 
 					if self.__cur_shot == self.__cached[9]:
 
-						main_surf.fill((0,0,0))
+						self.main_surf.fill((0,0,0))
 
 					else:
 
 						self.__knock.update(-1)
-						self.__knock.draw(main_surf)
+						self.__knock.draw(self.main_surf)
 						self.__knock.update(0)
-						self.__knock.draw(main_surf)
+						self.__knock.draw(self.main_surf)
 
 				else:
 
 					if self.__cur_shot < self.__cached[10]:
 
-						self.__blackout(main_surf, 1, 50)
+						self.__blackout(1, 50)
 
 					else:
 

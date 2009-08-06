@@ -36,9 +36,9 @@ class CHello(CBase):
 			else:
 				self.image = self.__clear_surf
 
-	def __init__(self):
+	def __init__(self, main_surf):
 
-		CBase.__init__(self)
+		CBase.__init__(self, main_surf)
 
 		self.__shot = 0
 
@@ -50,7 +50,7 @@ class CHello(CBase):
 		self.__matrix_num = 8
 		self.__matrix = pygame.sprite.Group([self.__CHelloMatrix(self.__matrix_num)])
 
-	def do_shot(self, main_surf):
+	def do_shot(self):
 
 		if self.__shot == 0:
 
@@ -58,20 +58,20 @@ class CHello(CBase):
 		
 		elif self.__shot < (self.__name.len + 1):
 			
-			self.__name.draw(main_surf, self.__shot - 1)
+			self.__name.draw(self.main_surf, self.__shot - 1)
 
 		elif self.__shot < (self.__name.len + self.__pres.len + 1):
 
-			self.__pres.draw(main_surf, self.__shot - self.__name.len - 1)
+			self.__pres.draw(self.main_surf, self.__shot - self.__name.len - 1)
 
 		elif self.__shot < (self.__name.len + self.__pres.len +15):
 
-			main_surf.blit(main_surf,(0, - rsl[1] / 30))
+			self.main_surf.blit(self.main_surf,(0, - rsl[1] / 30))
 
 		elif (self.__name.len + self.__pres.len + 15) == self.__shot:
 
-			self.__date.draw(main_surf)
-			self.__matrix.draw(main_surf)
+			self.__date.draw(self.main_surf)
+			self.__matrix.draw(self.main_surf)
 
 		elif self.__shot < (self.__name.len + self.__pres.len + 15 + 11):
 
@@ -79,15 +79,15 @@ class CHello(CBase):
 
 		elif self.__shot == (self.__name.len + self.__pres.len + 15 + 11):
 
-			main_surf.fill((0,0,0))
-			self.__matrix.draw(main_surf)
+			self.main_surf.fill((0,0,0))
+			self.__matrix.draw(self.main_surf)
 
 		elif self.__shot < (self.__name.len + self.__pres.len + 15 + self.__matrix_num + 11):
 
 			self.__matrix.update(1)
-			self.__matrix.draw(main_surf)
+			self.__matrix.draw(self.main_surf)
 			self.__matrix.update(0)
-			self.__matrix.draw(main_surf)
+			self.__matrix.draw(self.main_surf)
 
 		else:
 

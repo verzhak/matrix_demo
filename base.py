@@ -4,20 +4,21 @@ rsl = (640,480)
 
 class CBase:
 
-	def __init__(self, frame_per_sec = 10):
+	def __init__(self, main_surf, frame_per_sec = 10):
 		
+		self.main_surf = main_surf
 		self.__frame_per_sec = frame_per_sec
 		self.cur_shot = 0
 
-	def do_shot(self, main_surf):
+	def do_shot(self):
 
 		print("[Переопределить метод]")
 
-	def completion(self, main_surf):
+	def completion(self):
 
 		return False # Заглушка, метод переопределяется в дочерних классах там, где нужно
 
-	def main_loop(self, main_surf):
+	def main_loop(self):
 		
 		clock = pygame.time.Clock()
 
@@ -31,7 +32,7 @@ class CBase:
 
 				ret = False
 
-			elif self.do_shot(main_surf):
+			elif self.do_shot():
 				
 				pygame.display.flip()
 
@@ -39,12 +40,12 @@ class CBase:
 
 				ret = True
 
-		while self.completion(main_surf):
+		while self.completion():
 
 			clock.tick(self.__frame_per_sec)
 			pygame.display.flip()
 
-		main_surf.fill((0,0,0))
+		self.main_surf.fill((0,0,0))
 
 		return ret
 
@@ -68,8 +69,8 @@ class CStr:
 				self.width = self.surf.get_rect().width
 			else:
 				self.surf = []
-				for x in range(0, self.len):
-					self.surf.append(font.render(self.str[x],True,self.font_color,(0,0,0)))
+				for x in self.str:
+					self.surf.append(font.render(x,True,self.font_color,(0,0,0)))
 				self.height = self.surf[0].get_rect().height
 				self.width = self.surf[0].get_rect().width * self.len
 
