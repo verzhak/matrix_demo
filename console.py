@@ -111,9 +111,9 @@ class CConsole(CBase):
 
 				self.__surf_loop = self.__surf_loop + 1
 
-	def __init__(self, event_delay):
+	def __init__(self):
 		
-		CBase.__init__(self, 2, event_delay)
+		CBase.__init__(self)
 
 		self.__wakeup = CStr("Wake up, Neo!", 22, font_color = (30, 189, 4), pos = (10,10))
 		self.__has_you = CStr("The Matrix has you...", 22,
@@ -150,15 +150,13 @@ class CConsole(CBase):
 
 	def __blackout(self, main_surf, rect, step):
 
-		x = rect.x
-		x_guard = x + rect.width
+#		main_surf.set_colorkey((20,189,4))
+		x_reg = range(rect.x, rect.x + rect.width)
+		y_reg = range(rect.y, rect.y + rect.height)
 
-		while x < x_guard:
+		for x in x_reg:
 
-			y = rect.y
-			y_guard = y + rect.height
-
-			while y < y_guard:
+			for y in y_reg:
 
 				tcol = main_surf.get_at((x,y))
 
@@ -169,10 +167,6 @@ class CConsole(CBase):
 				elif tcol[1] > 0:
 
 					main_surf.set_at((x,y), (tcol[0], 0, tcol[2]))
-
-				y = y + 1
-
-			x = x + 1
 
 	def do_shot(self, main_surf):
 
@@ -240,7 +234,7 @@ class CConsole(CBase):
 
 					else:
 
-						surf_ind =self.__cur_shot - self.__cached[7] 
+						surf_ind = self.__cur_shot - self.__cached[7] 
 
 						self.__cursor.update(-1)
 						self.__cursor.draw(main_surf)

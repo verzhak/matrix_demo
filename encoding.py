@@ -4,9 +4,9 @@ from base import CBase, rsl
 
 class CEnc(CBase):
 
-	def __init__(self, event_delay):
+	def __init__(self):
 
-		CBase.__init__(self, 3, event_delay)
+		CBase.__init__(self)
 
 		self.__font = pygame.font.Font("fonts/enc.ttf",24)
 

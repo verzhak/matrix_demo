@@ -4,10 +4,9 @@ rsl = (640,480)
 
 class CBase:
 
-	def __init__(self, event_num, event_delay):
+	def __init__(self, frame_per_sec = 10):
 		
-		self.__event_num = event_num
-		self.__event_delay = event_delay
+		self.__frame_per_sec = frame_per_sec
 		self.cur_shot = 0
 
 	def do_shot(self, main_surf):
@@ -19,54 +18,35 @@ class CBase:
 		return False # Заглушка, метод переопределяется в дочерних классах там, где нужно
 
 	def main_loop(self, main_surf):
+		
+		clock = pygame.time.Clock()
 
-		event_type = pygame.USEREVENT + self.__event_num
-		pygame.time.set_timer(event_type, self.__event_delay)
+		ret = None
 
-		running = 3
+		while ret == None:
 
-		while running == 3:
+			clock.tick(self.__frame_per_sec)
 
-			event = pygame.event.poll()
-			
-			if event.type == pygame.KEYDOWN:	
-			
-				if event.key == pygame.K_ESCAPE:
-				
-					running = 1
+			if pygame.K_ESCAPE in map(lambda ev: ev.key, pygame.event.get(pygame.KEYDOWN)):
 
-			elif event.type == event_type:
-				
-				if not self.do_shot(main_surf):
-				
-					running = 2
+				ret = False
+
+			elif self.do_shot(main_surf):
 				
 				pygame.display.flip()
 
-		run_compl = True
+			else:
 
-		while run_compl:
+				ret = True
 
-			event = pygame.event.poll()
+		while self.completion(main_surf):
 
-			if event.type == event_type:
-				
-				if not self.completion(main_surf):
-
-					run_compl = False
-
-				pygame.display.flip()
+			clock.tick(self.__frame_per_sec)
+			pygame.display.flip()
 
 		main_surf.fill((0,0,0))
 
-		if running == 2:
-
-			return True
-
-		else:
-
-			return False
-
+		return ret
 
 class CStr:
 

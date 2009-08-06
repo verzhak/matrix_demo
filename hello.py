@@ -36,9 +36,9 @@ class CHello(CBase):
 			else:
 				self.image = self.__clear_surf
 
-	def __init__(self, event_delay):
+	def __init__(self):
 
-		CBase.__init__(self, 1, event_delay)
+		CBase.__init__(self)
 
 		self.__shot = 0
 
