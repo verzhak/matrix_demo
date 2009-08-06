@@ -10,7 +10,12 @@ class CEnc(CBase):
 
 		self.__font = pygame.font.Font("fonts/enc.ttf",24)
 
-		self.__sg = [ord("A"), ord("z")] # Symbol (generation) guard
+		first_sym = ord("A")
+		self.__sg = ord("z") - first_sym # Symbol (generation) guard
+		self.__surf = []
+		for x in range(0, self.__sg + 1):
+			self.__surf.append(self.__font.render(chr(first_sym + x) ,True, (30, 189, 4)))
+
 		self.__prob = [-50, 20, -10]
 		self.__step = 14
 
@@ -48,9 +53,9 @@ class CEnc(CBase):
 			
 			if x > 0:
 
-				sym_s = self.__font.render(chr(randint(self.__sg[0], self.__sg[1])),True, (30, 189, 4))
-				self.main_surf.blit(sym_s, ((num * self.__step, 0), (sym_s.get_width(),
-																				sym_s.get_height())))
+				y = randint(0, self.__sg)
+				self.main_surf.blit(self.__surf[y], ((num * self.__step, 0),
+									(self.__surf[y].get_width(),self.__surf[y].get_height())))
 
 			elif x < self.__prob[2]:
 

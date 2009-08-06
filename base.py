@@ -26,6 +26,7 @@ class CBase:
 
 		while ret == None:
 
+			pygame.event.clear()
 			clock.tick(self.__frame_per_sec)
 
 			if pygame.K_ESCAPE in map(lambda ev: ev.key, pygame.event.get(pygame.KEYDOWN)):
