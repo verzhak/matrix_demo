@@ -123,13 +123,16 @@ class CConsole(CBase):
 		self.__knock_sprite = self.__CKnock()
 		self.__knock = pygame.sprite.Group([self.__knock_sprite])
 
-		self.__whr_active_rect = pygame.Rect((10,10), (
-			self.__rabbit.rect.width + 40,
-			10 + self.__wakeup.rect.height + self.__has_you.rect.height + self.__rabbit.rect.height))
-
-		self.__kk_active_rect = pygame.Rect((
-			self.__knock_sprite.rect.x, self.__knock_sprite.rect.y),
-			(500, 200))
+		# 0 - WakeUp+Rabbit+MHY; 1 - Knock,Knock
+		self.__cached_region = [(
+									range(10, self.__rabbit.rect.width + 40),
+									range(10, 10 + self.__wakeup.rect.height +
+											self.__has_you.rect.height + self.__rabbit.rect.height)
+								),
+								(
+									range(self.__knock_sprite.rect.x, 570),
+									range(self.__knock_sprite.rect.y, 340)
+								)]
 
 		self.__cursor = pygame.sprite.Group([self.__CCursor()])
 
@@ -148,15 +151,11 @@ class CConsole(CBase):
 			(73 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len),
 			(101 + self.__wakeup.len + self.__has_you.len + self.__rabbit.len)]
 
-	def __blackout(self, main_surf, rect, step):
+	def __blackout(self, main_surf, reg, step):
 
-#		main_surf.set_colorkey((20,189,4))
-		x_reg = range(rect.x, rect.x + rect.width)
-		y_reg = range(rect.y, rect.y + rect.height)
+		for x in self.__cached_region[reg][0]:
 
-		for x in x_reg:
-
-			for y in y_reg:
+			for y in self.__cached_region[reg][1]:
 
 				tcol = main_surf.get_at((x,y))
 
@@ -245,7 +244,7 @@ class CConsole(CBase):
 
 				else:
 
-					self.__blackout(main_surf, self.__whr_active_rect, 10)
+					self.__blackout(main_surf, 0, 10)
 
 			else:
 
@@ -266,7 +265,7 @@ class CConsole(CBase):
 
 					if self.__cur_shot < self.__cached[10]:
 
-						self.__blackout(main_surf, self.__kk_active_rect, 50)
+						self.__blackout(main_surf, 1, 50)
 
 					else:
 

@@ -20,12 +20,10 @@ pygame.display.set_icon(pygame.image.load("image/icon.png"))
 main_surf.fill((0,0,0))
 pygame.display.flip()
 
-# TODO убрать комментарии
 if my_hello.main_loop(main_surf):
 	
 	if my_console.main_loop(main_surf):
 
 		my_enc.main_loop(main_surf)
 
-#my_console.main_loop(main_surf)
 
